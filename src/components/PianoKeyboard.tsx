@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { drawPianoRoll, getPianoRollMeasurements, handlePianoRollMousePress } from '../features/drawing/piano';
-import midiState from '../features/midi';
+import midiState, { enableOutputMidiDevice, getMidiOutputs } from '../features/midi';
 import type { MidiStateEvent } from '../types';
 
 export function PianoKeyboard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeNotes, setActiveNotes] = useState<Map<number, string>>(new Map());
+
+  const midiListenerProps = midiState.getListenerProps();
 
   // ✅ KONTINUIERLICHER LOOP (60fps)
   useEffect(() => {
@@ -59,6 +61,14 @@ export function PianoKeyboard() {
     return () => midiState.unsubscribe(handleMidiEvent);
   }, []);
 
+  useEffect(() => {
+  getMidiOutputs().then(outputs => {
+    for (const device of outputs.values()) {
+      enableOutputMidiDevice(device)
+    }
+  })
+}, [])
+
   // ✅ MOUSE/TOUCH INPUT
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
@@ -80,6 +90,7 @@ export function PianoKeyboard() {
   return (
   <canvas
     ref={canvasRef}
+    {...midiState.getListenerProps()} 
     style={{
       width: '100vw',
       height: '100vh',
@@ -94,3 +105,5 @@ export function PianoKeyboard() {
   />
 );
 }
+
+
