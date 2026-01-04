@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@plugin 'tailwindcss-react-aria-components';
+@plugin 'tailwindcss-animate';
+
+:root {
+  --font-family: system-ui, sans-serif;
+  font-family: var(--font-family);
+}
+
+@layer base {
+  html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  * {
+    border-color: currentColor;
+  }
+}
+
+@theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+}
